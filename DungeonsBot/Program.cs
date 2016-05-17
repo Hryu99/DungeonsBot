@@ -19,8 +19,6 @@ namespace DungeonsBot
 
             //получаем sid
             data = SendRequest("/command/get_game_info", string.Format(@"<get_game_info uid=""{0}"" auth_key=""{1}""/>", uid, auth));
-            data.IndexOf("sid=\"");
-
             //разобраться как парсить ХМЛ, вынимать из него необходимые данные и тп
 
             XmlDocument doc = new XmlDocument();
