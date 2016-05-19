@@ -19,16 +19,17 @@ namespace DungeonsBot
 
             //получаем sid
             data = SendRequest("/command/get_game_info", string.Format(@"<get_game_info uid=""{0}"" auth_key=""{1}""/>", uid, auth));
-            //разобраться как парсить ХМЛ, вынимать из него необходимые данные и тп
-
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(data);
             
+            XmlDocument userScheme = new XmlDocument();
+            userScheme.LoadXml(data);
+            string sid = userScheme.SelectSingleNode(".//@sid").Value;
+            //Console.WriteLine(sid); 
+
+            //нужен ли тут апдейт, или для "производства" ресурсов достаточно запустить гетгейминфо
+            data = SendRequest("/command/update", string.Format(@"<update uid=""{0}"" auth_key=""{1}"" sid=""{2}""/>", uid, auth, sid));
+            Console.WriteLine(data);        
            
 
-
-
-            Console.WriteLine("2");
              
             Console.ReadKey();
         }
@@ -38,8 +39,8 @@ namespace DungeonsBot
             string host = "https://game-r06ww.rjgplay.com";
             string url = host + command;
 
-            MyWebRequest test = new MyWebRequest(url, "POST", requestBody);
-            return test.GetResponse();
+            MyWebRequest request = new MyWebRequest(url, "POST", requestBody);
+            return request.GetResponse();
         }
     }
 }
