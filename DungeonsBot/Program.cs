@@ -32,7 +32,7 @@ namespace DungeonsBot
             //data = sendRequest("/command/update", string.Format(@"<update uid=""{0}"" auth_key=""{1}"" sid=""{2}""/>", uid, auth, sid));
             //Console.WriteLine(data);
 
-            //словарь зданий добывающих ресурсы
+            //словарь зданий, добывающих ресурсы
             Dictionary <string, string[]> resourceBuildings = new Dictionary<string, string[]>();
             resourceBuildings.Add("lumberjack", new string[] { "materials", "lumberjack_s01", "lumberjack_s02", "lumberjack_s03", "lumberjack_s04" });
             resourceBuildings.Add("quarry", new string[] { "materials", "lumberjack_s01", "lumberjack_s02", "lumberjack_s03", "lumberjack_s04" });
@@ -41,6 +41,7 @@ namespace DungeonsBot
             resourceBuildings.Add("field", new string[] { "food", "field_s01", "field_s02", "field_s03", "field_s04" });
             resourceBuildings.Add("fish", new string[] { "food", "field_s01", "field_s02", "field_s03", "field_s04" });
             resourceBuildings.Add("animal_farm", new string[] { "food", "field_s01", "field_s02", "field_s03", "field_s04" });
+			resourceBuildings.Add("chefs_guild", new string[] { "food" });
 
             resourceBuildings.Add("grove", new string[] { "dust", "grove_s01", "grove_s02", "grove_s03", "grove_s04" });
             resourceBuildings.Add("grotto", new string[] { "dust", "grove_s01", "grove_s02", "grove_s03", "grove_s04" });
@@ -50,12 +51,12 @@ namespace DungeonsBot
             resourceBuildings.Add("gambling", new string[] { "gold" });
             resourceBuildings.Add("cook_shop", new string[] { "gold" });
             resourceBuildings.Add("bath", new string[] { "gold" });
-            resourceBuildings.Add("fortune_teller", new string[] { "gold" }); //TODO: уточнить название
+            resourceBuildings.Add("fortune", new string[] { "gold" });
 
             resourceBuildings.Add("golden_fountain", new string[] { "gold" });
             resourceBuildings.Add("magic_generator", new string[] { "dust" });
             resourceBuildings.Add("rotten_belly_pit", new string[] { "materials" });
-            resourceBuildings.Add("food_anturajka", new string[] { "food" }); //TODO: уточнить название
+            resourceBuildings.Add("coconut_grove", new string[] { "food" });
 
             resourceBuildings.Add("arkentarium", new string[] { "crystal" });
             resourceBuildings.Add("magic_crystal", new string[] { "snowstorm" });
@@ -86,14 +87,15 @@ namespace DungeonsBot
 
         public ResourceLimits(XmlDocument userScheme)
         {
-            int goldStorageLimit = 1000;
-            int foodStorageLimit = 1000;
-            int dustStorageLimit = 1000;
-            int materialsStorageLimit = 1000;
+			//каждое здание добавляет к лимиту
+            int goldStorageLimit = 2000;
+            int foodStorageLimit = 1500;
+            int dustStorageLimit = 5000;
+            int materialsStorageLimit = 4000;
 
             int goldStorageCount = userScheme.SelectNodes(".//building/type[text()='treasury']").Count;
             int foodStorageCount = userScheme.SelectNodes(".//building/type[text()='granary']").Count;
-            int dustStorageCount = userScheme.SelectNodes(".//building/type[text()='dustStorageCount']").Count; //TODO: поменять потом на актуальное
+            int dustStorageCount = userScheme.SelectNodes(".//building/type[text()='dust_store']").Count;
             int materialsStorageCount = userScheme.SelectNodes(".//building/type[text()='storehouse']").Count;
 
             gold = gold + goldStorageLimit * goldStorageCount;
