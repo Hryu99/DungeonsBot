@@ -18,22 +18,41 @@ namespace DungeonsBot
             string auth = "ab3ea4154fc2a9313aa3e16f98d244ad";
 
             //получаем sid
-            data = sendRequest("/command/get_game_info", string.Format(@"<get_game_info uid=""{0}"" auth_key=""{1}""/>", uid, auth));
-            
+            data = sendRequest("/command/get_game_info", string.Format(@"<get_game_info uid=""{0}"" auth_key=""{1}""/>", uid, auth));            
             XmlDocument userScheme = new XmlDocument();
             userScheme.LoadXml(data);
-            string sid = userScheme.SelectSingleNode(".//@sid").Value;
-            //Console.WriteLine(sid); 
+            string sid = userScheme.SelectSingleNode(".//@sid").Value; 
 
+            //считаем лимиты по ресурсам
             ResourceLimits limits = new ResourceLimits(userScheme);
-            Console.WriteLine(limits.Gold); 
 
             // NOTE: нужен ли тут апдейт, или для "производства" ресурсов достаточно запустить гетгейминфо
             //data = sendRequest("/command/update", string.Format(@"<update uid=""{0}"" auth_key=""{1}"" sid=""{2}""/>", uid, auth, sid));
             //Console.WriteLine(data);
 
             //словарь зданий, добывающих ресурсы
-            Dictionary <string, string[]> resourceBuildings = new Dictionary<string, string[]>();
+            var resourceBuildings = getResourceBuildingsDic();
+            var testLimit = resourceBuildings.g
+
+
+
+
+
+            Console.ReadKey();
+        }
+
+        static string sendRequest(string command, string requestBody)
+        {
+            string host = "https://game-r06ww.rjgplay.com";
+            string url = host + command;
+
+            MyWebRequest request = new MyWebRequest(url, "POST", requestBody);
+            return request.GetResponse();
+        }
+        
+        static Dictionary<string, string[]> getResourceBuildingsDic()
+        {
+            Dictionary<string, string[]> resourceBuildings = new Dictionary<string, string[]>();
             resourceBuildings.Add("lumberjack", new string[] { "materials", "lumberjack_s01", "lumberjack_s02", "lumberjack_s03", "lumberjack_s04" });
             resourceBuildings.Add("quarry", new string[] { "materials", "lumberjack_s01", "lumberjack_s02", "lumberjack_s03", "lumberjack_s04" });
             resourceBuildings.Add("mine", new string[] { "materials", "lumberjack_s01", "lumberjack_s02", "lumberjack_s03", "lumberjack_s04" });
@@ -41,7 +60,7 @@ namespace DungeonsBot
             resourceBuildings.Add("field", new string[] { "food", "field_s01", "field_s02", "field_s03", "field_s04" });
             resourceBuildings.Add("fish", new string[] { "food", "field_s01", "field_s02", "field_s03", "field_s04" });
             resourceBuildings.Add("animal_farm", new string[] { "food", "field_s01", "field_s02", "field_s03", "field_s04" });
-			resourceBuildings.Add("chefs_guild", new string[] { "food" });
+            resourceBuildings.Add("chefs_guild", new string[] { "food" });
 
             resourceBuildings.Add("grove", new string[] { "dust", "grove_s01", "grove_s02", "grove_s03", "grove_s04" });
             resourceBuildings.Add("grotto", new string[] { "dust", "grove_s01", "grove_s02", "grove_s03", "grove_s04" });
@@ -61,20 +80,8 @@ namespace DungeonsBot
             resourceBuildings.Add("arkentarium", new string[] { "crystal" });
             resourceBuildings.Add("magic_crystal", new string[] { "snowstorm" });
 
-
-
-
-            Console.ReadKey();
+            return resourceBuildings;
         }
-
-        static string sendRequest(string command, string requestBody)
-        {
-            string host = "https://game-r06ww.rjgplay.com";
-            string url = host + command;
-
-            MyWebRequest request = new MyWebRequest(url, "POST", requestBody);
-            return request.GetResponse();
-        }        
     }
 
     public class ResourceLimits
@@ -109,5 +116,22 @@ namespace DungeonsBot
         public int Materials { get { return materials; } }
         public int Dust { get { return dust; } }
         public int Food { get { return food; } }
+
+        //TODO: сделать метод возвращающий лимит. А если его нет то возвращает null или что то этакое
+        //соответственно в программе сначале идет проверка на лимит, если он не null тогда проверяем, иначе просто собираем ресурс
+
+
+        //как то это все криво выглядит. Сделать свойство в виде словаря?
+        public int getResourceLimit (string resource)
+        {
+            if (resource == "gold" || resource == "gold")
+            {
+                return gold;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }
