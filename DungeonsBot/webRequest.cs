@@ -94,7 +94,7 @@ namespace DungeonsBot
             response.Close();
 
             return responseFromServer;
-        }
+        }       
 
     }
 }

@@ -43,8 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Buildings\ResourceBuildings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceLimits.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="UserItems.cs" />
     <Compile Include="webRequest.cs" />
   </ItemGroup>
   <ItemGroup>
