@@ -11,14 +11,16 @@ namespace DungeonsBot
     class User
     {
         private string uid, auth, sid, userHost;
+        private int sleepInterval, nextStart;
         private UserItems userItems;
         private ResourceLimits limits;
         private XmlDocument userScheme;
 
-        public User(string _uid, string _auth)
+        public User(string _uid, string _auth, int _sleepInterval)
         {
             uid = _uid;
             auth = _auth;
+            sleepInterval = _sleepInterval;
 
             if (_uid.Substring(0, 2) == "fb")
             {
@@ -32,10 +34,15 @@ namespace DungeonsBot
 
         public string Uid { get { return uid; } }
         public string Auth { get { return auth; } }
+        public int NextStart { get { return nextStart; } }
 
 
-        public void StartMagic(int sleepTime)
+        public void StartMagic()
         {
+            nextStart = UnixTimeNow() + sleepInterval;
+            Console.WriteLine("текущее время" + UnixTimeNow());
+            Console.WriteLine("следущее начало в : " + nextStart);
+
             //получаем sid и схему игрока
             string data = sendRequest("/command/get_game_info", string.Format(@"<get_game_info uid=""{0}"" auth_key=""{1}""/>", uid, auth));
             userScheme = new XmlDocument();
@@ -48,9 +55,7 @@ namespace DungeonsBot
             //в зависимости от настроек игрока запускаем функции по списку
             CollectResources();
 
-            Console.WriteLine("end of iteration");
-            TimeSpan interval = new TimeSpan(0, 0, sleepTime);
-            Thread.Sleep(interval);
+            Console.WriteLine("end of iteration");           
         }
 
 
@@ -117,5 +122,12 @@ namespace DungeonsBot
             MyWebRequest request = new MyWebRequest(url, "POST", requestBody);
             return request.GetResponse();
         }
+
+        public static int UnixTimeNow()
+        {
+            return (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
+
     }
 }
