@@ -16,19 +16,21 @@ namespace DungeonsBot
         {
             //TODO: получаем настройки игрока пока что из файла (id, auth) (игроков может быть несколько). В том числе время выполнения следующих запросов
             //пробегаемся по всем игрокам, учитывая время старта
-            //у тех у кого подошло данное время, создаем экземпляр управляющей программы, которая запускает все остальное
-            //пока что все захардкожено
-            
-            User user1 = new User("fb:924660480936953", "ab3ea4154fc2a9313aa3e16f98d244ad");
-            User user2 = new User("od:563975376967", "2c8a38aaa12749a09178e7e35d1cacce");
+            List<User> userList = new List<User>();
+            userList.Add(new User("fb:924660480936953", "ab3ea4154fc2a9313aa3e16f98d244ad", 40));
+            userList.Add(new User("od:563975376967", "2c8a38aaa12749a09178e7e35d1cacce", 20));
 
-           
+
             while (true)
             {
-                Task user1task = Task.Run(() => user1.StartMagic(20));
-
-                Task user2task = Task.Run(() => user2.StartMagic(40));
-                
+                foreach (User user in userList)
+                {
+                    if (user.NextStart < UnixTimeNow())
+                    {
+                        Task userTask = Task.Run(() => user.StartMagic());
+                    }
+                    Thread.Sleep(1000);
+                }                
             }
             
             //узнать как ловить эксепшены
@@ -44,8 +46,14 @@ namespace DungeonsBot
             Console.ReadKey();
         }
 
-                
-        
+        //NOTE: как сделать метод, которым можно вызывать откуда угодно?
+        public static int UnixTimeNow()
+        {
+            return (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
+
+
     }
 
 
